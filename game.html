@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Super Cat Adventure</title>
+  <style>
+    /* Шрифт, максимально близкий к стилю Super Bear Adventure — округлый, мультяшный, жирный */
+    @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;600;700;800&display=swap');
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+    }
+
+    /* ГОЛУБОЕ НЕБО */
+    body {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 30%, #a8e0ff 0%, #5fb8f0 40%, #2b86c9 100%);
+      font-family: 'Baloo 2', 'Comic Sans MS', 'Chalkboard SE', cursive, sans-serif;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Мультяшные облака на фоне */
+    .cloud {
+      position: absolute;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 50%;
+      filter: drop-shadow(0 8px 0 rgba(0, 0, 0, 0.08));
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .cloud::before,
+    .cloud::after {
+      content: '';
+      position: absolute;
+      background: inherit;
+      border-radius: 50%;
+    }
+
+    .cloud1 {
+      width: 120px; height: 70px;
+      top: 8%; left: 6%;
+      animation: floatCloud 18s ease-in-out infinite;
+    }
+    .cloud1::before { width: 70px; height: 70px; top: -28px; left: 12px; }
+    .cloud1::after  { width: 55px; height: 55px; top: -20px; left: 58px; }
+
+    .cloud2 {
+      width: 160px; height: 85px;
+      top: 15%; right: 4%;
+      animation: floatCloud 24s ease-in-out infinite reverse;
+      opacity: 0.85;
+    }
+    .cloud2::before { width: 90px; height: 90px; top: -40px; left: 20px; }
+    .cloud2::after  { width: 70px; height: 70px; top: -30px; left: 80px; }
+
+    .cloud3 {
+      width: 90px; height: 55px;
+      bottom: 12%; left: 12%;
+      animation: floatCloud 20s ease-in-out infinite 3s;
+      opacity: 0.7;
+    }
+    .cloud3::before { width: 55px; height: 55px; top: -22px; left: 8px; }
+    .cloud3::after  { width: 42px; height: 42px; top: -16px; left: 44px; }
+
+    @keyframes floatCloud {
+      0%, 100% { transform: translateY(0) translateX(0); }
+      50%      { transform: translateY(-18px) translateX(12px); }
+    }
+
+    /* Основное окно загрузки — ЛАЙМОВОЕ */
+    .loader-window {
+      position: relative;
+      z-index: 10;
+      width: 560px;
+      max-width: 92vw;
+      background: linear-gradient(180deg, #f7ffe6 0%, #e8f9c9 100%);
+      border-radius: 42px;
+      padding: 42px 38px 46px;
+      box-shadow:
+        0 14px 0 #8fc63d,
+        0 20px 40px rgba(0, 0, 0, 0.35),
+        inset 0 -6px 0 rgba(143, 198, 61, 0.4),
+        inset 0 6px 12px rgba(255, 255, 255, 0.9);
+      border: 6px solid #c6f07a;
+      text-align: center;
+      transition: transform 0.3s ease;
+    }
+
+    /* Логотип / название игры */
+    .game-title {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1.05;
+      color: #6abf1f;
+      text-shadow:
+        3px 3px 0 #ffffff,
+        6px 6px 0 #3f8a0f,
+        0 10px 18px rgba(0, 0, 0, 0.15);
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      transform: rotate(-2deg);
+    }
+
+    .game-title .highlight {
+      color: #d4ff3d;
+      text-shadow:
+        3px 3px 0 #ffffff,
+        6px 6px 0 #8aa600,
+        0 10px 18px rgba(0, 0, 0, 0.15);
+    }
+
+    .game-sub {
+      font-size: 22px;
+      font-weight: 700;
+      color: #4a7a1b;
+      text-shadow: 2px 2px 0 #f0ffd6;
+      margin-bottom: 28px;
+      letter-spacing: 0.5px;
+      transform: rotate(-1deg);
+    }
+
+    /* Кот-маскот */
+    .cat-avatar {
+      width: 110px;
+      height: 110px;
+      margin: 0 auto 16px;
+      background: radial-gradient(circle at 35% 30%, #d4ff3d, #8bc72e);
+      border-radius: 50%;
+      border: 6px solid #f0ffd6;
+      box-shadow: 0 8px 0 #5c9c1a, 0 10px 20px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 58px;
+      line-height: 1;
+      position: relative;
+      animation: catBounce 1.4s ease-in-out infinite;
+    }
+
+    @keyframes catBounce {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50%      { transform: translateY(-8px) rotate(3deg); }
+    }
+
+    .cat-avatar::after {
+      content: '🐾';
+      position: absolute;
+      bottom: -12px;
+      right: -12px;
+      font-size: 28px;
+      transform: rotate(20deg);
+      filter: drop-shadow(0 3px 0 rgba(0,0,0,0.15));
+    }
+
+    /* Прогресс-бар */
+    .progress-wrap {
+      width: 100%;
+      background: #c9e5a0;
+      border-radius: 60px;
+      padding: 7px;
+      box-shadow:
+        inset 0 5px 8px rgba(0, 0, 0, 0.25),
+        0 3px 0 #f0ffd6;
+      margin-bottom: 14px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 36px;
+      width: 0%;
+      border-radius: 60px;
+      background: linear-gradient(90deg, #d4ff3d 0%, #a8e63d 50%, #6abf1f 100%);
+      box-shadow:
+        inset 0 -5px 0 rgba(0, 0, 0, 0.12),
+        inset 0 5px 0 rgba(255, 255, 255, 0.45);
+      transition: width 0.25s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Блик на прогресс-баре */
+    .progress-bar::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: linear-gradient(
+        110deg,
+        transparent 20%,
+        rgba(255,255,255,0.55) 45%,
+        transparent 70%
+      );
+      border-radius: 60px;
+      animation: shine 1.6s linear infinite;
+    }
+
+    @keyframes shine {
+      0%   { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    /* Текст процентов */
+    .progress-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: #3f6a12;
+      text-shadow: 1px 1px 0 #f0ffd6;
+      letter-spacing: 1px;
+    }
+
+    /* Подпись "Загрузка..." */
+    .loading-label {
+      font-size: 18px;
+      font-weight: 600;
+      color: #7ba348;
+      margin-top: 6px;
+      animation: blink 1.2s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0.45; }
+    }
+
+    /* ===== МОДАЛЬНОЕ ОКНО ОШИБКИ ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 30, 0, 0.55);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-box {
+      width: 480px;
+      max-width: 90vw;
+      background: linear-gradient(180deg, #f8ffe6 0%, #e8f9c9 100%);
+      border-radius: 38px;
+      padding: 40px 32px 34px;
+      text-align: center;
+      border: 6px solid #a8e63d;
+      box-shadow:
+        0 14px 0 #6a9c1e,
+        0 24px 50px rgba(0, 0, 0, 0.45);
+      transform: scale(0.8) translateY(30px);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+      position: relative;
+    }
+
+    .modal-overlay.show .modal-box {
+      transform: scale(1) translateY(0);
+    }
+
+    .modal-icon {
+      width: 90px;
+      height: 90px;
+      margin: 0 auto 18px;
+      background: radial-gradient(circle at 35% 30%, #b4ff5c, #5ca81a);
+      border-radius: 50%;
+      border: 5px solid #d4ff3d;
+      box-shadow: 0 8px 0 #3a6e10, 0 10px 20px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 52px;
+      animation: shake 0.5s ease-in-out 2;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      25%      { transform: rotate(-8deg); }
+      75%      { transform: rotate(8deg); }
+    }
+
+    .modal-title {
+      font-size: 32px;
+      font-weight: 800;
+      color: #3f8a0f;
+      text-shadow: 2px 2px 0 #ffffff, 4px 4px 0 #a8e63d;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+
+    .modal-message {
+      font-size: 19px;
+      font-weight: 600;
+      color: #4a7a1b;
+      text-shadow: 1px 1px 0 #f0ffd6;
+      line-height: 1.4;
+      margin-bottom: 26px;
+    }
+
+    .modal-button {
+      font-family: 'Baloo 2', 'Comic Sans MS', cursive, sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      background: linear-gradient(180deg, #a8e63d 0%, #6abf1f 100%);
+      border: none;
+      border-radius: 60px;
+      padding: 14px 48px;
+      cursor: pointer;
+      text-shadow: 2px 2px 0 rgba(0, 0, 0, 0.25);
+      box-shadow:
+        0 8px 0 #3f8a0f,
+        0 12px 22px rgba(0, 0, 0, 0.3);
+      transition: all 0.12s ease;
+      letter-spacing: 1px;
+      outline: none;
+    }
+
+    .modal-button:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        0 10px 0 #3f8a0f,
+        0 16px 28px rgba(0, 0, 0, 0.35);
+      filter: brightness(1.06);
+    }
+
+    .modal-button:active {
+      transform: translateY(6px);
+      box-shadow:
+        0 2px 0 #3f8a0f,
+        0 6px 14px rgba(0, 0, 0, 0.3);
+    }
+
+    /* Адаптив */
+    @media (max-width: 520px) {
+      .loader-window {
+        padding: 30px 20px 34px;
+        border-radius: 32px;
+      }
+      .game-title { font-size: 36px; }
+      .game-sub { font-size: 17px; }
+      .cat-avatar { width: 85px; height: 85px; font-size: 44px; }
+      .progress-bar { height: 28px; }
+      .progress-text { font-size: 18px; }
+      .modal-box { padding: 30px 20px 26px; border-radius: 30px; }
+      .modal-title { font-size: 26px; }
+      .modal-message { font-size: 16px; }
+      .modal-button { font-size: 18px; padding: 12px 36px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Фоновые облака -->
+  <div class="cloud cloud1"></div>
+  <div class="cloud cloud2"></div>
+  <div class="cloud cloud3"></div>
+
+  <!-- Окно загрузки -->
+  <div class="loader-window">
+    <div class="game-title">
+      SUPER <span class="highlight">CAT</span><br>ADVENTURE
+    </div>
+    <div class="game-sub">🐱 Приключение начинается! 🐾</div>
+
+    <div class="cat-avatar">🐱</div>
+
+    <div class="progress-wrap">
+      <div class="progress-bar" id="progressBar"></div>
+    </div>
+    <div class="progress-text" id="progressText">0%</div>
+    <div class="loading-label">Загрузка...</div>
+  </div>
+
+  <!-- Модальное окно ошибки -->
+  <div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+      <div class="modal-icon">⚠️</div>
+      <div class="modal-title">ОШИБКА!</div>
+      <div class="modal-message">
+        Материалы не найдены.<br>
+        Не удалось загрузить игровые ресурсы.<br>
+        Проверьте подключение и попробуйте снова.
+      </div>
+      <button class="modal-button" id="modalButton">ПОВТОРИТЬ</button>
+    </div>
+  </div>
+
+  <script>
+    (function() {
+      const progressBar = document.getElementById('progressBar');
+      const progressText = document.getElementById('progressText');
+      const modalOverlay = document.getElementById('modalOverlay');
+      const modalButton = document.getElementById('modalButton');
+
+      let progress = 0;
+      let intervalId = null;
+      let errorShown = false;
+
+      // Скорость загрузки: примерно 0.8–1.8% за тик (тик ~ 45 мс) — до 100% за ~4–5 секунд
+      const TICK_MS = 45;
+
+      function updateUI() {
+        // Ограничиваем 0–100
+        const clamped = Math.min(progress, 100);
+        progressBar.style.width = clamped + '%';
+        progressText.textContent = Math.floor(clamped) + '%';
+      }
+
+      function showErrorModal() {
+        if (errorShown) return;
+        errorShown = true;
+
+        // Небольшая задержка, чтобы игрок увидел 100%
+        setTimeout(() => {
+          modalOverlay.classList.add('show');
+        }, 320);
+      }
+
+      function startLoading() {
+        // Сброс
+        progress = 0;
+        errorShown = false;
+        modalOverlay.classList.remove('show');
+        updateUI();
+
+        if (intervalId) clearInterval(intervalId);
+
+        intervalId = setInterval(() => {
+          // Случайный шаг для естественности
+          const step = 0.6 + Math.random() * 1.6;
+          progress += step;
+
+          if (progress >= 100) {
+            progress = 100;
+            updateUI();
+            clearInterval(intervalId);
+            intervalId = null;
+
+            // При достижении 100% — показываем модальное окно
+            showErrorModal();
+            return;
+          }
+
+          updateUI();
+        }, TICK_MS);
+      }
+
+      // Кнопка "Повторить" — перезапускает загрузку
+      modalButton.addEventListener('click', () => {
+        modalOverlay.classList.remove('show');
+        // Даём анимации закрытия завершиться и запускаем заново
+        setTimeout(() => {
+          startLoading();
+        }, 300);
+      });
+
+      // Старт при загрузке страницы
+      window.addEventListener('load', startLoading);
+    })();
+  </script>
+</body>
+</html>
